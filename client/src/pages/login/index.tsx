@@ -1,7 +1,8 @@
  import { useState } from 'react';
 import styles from './styles.module.css';
+import { Button, TextField } from '@mui/material';
+import { Login } from '../../services/login';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
 
 // interface HomeParams {
 //   username: string;
@@ -12,13 +13,9 @@ import { Button } from '@mui/material';
 // }
 
 export function Home() {
-  const [username, setUsername] = useState(''); // Add this
-  const [password, setPassword] = useState(''); // Add this
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
-
-  async function enterSystem() {
-    navigate('/chat', { replace: true });
-  }
 
   // const joinRoom = () => {
   //   if (props.room && props.username) {
@@ -27,39 +24,51 @@ export function Home() {
   //   navigate('/chat', { replace: true });
   // };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      await Login({ email, password });
+      navigate('/chat', { replace: true });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <>
-      <meta charSet="utf-8" />
-      <title>Login Form Design | CodingAyush</title>
-      <link rel="stylesheet" href="style.css" />
       <div className={styles.wrapper}>
-        <div className={styles.title}>Login Form</div>
-        <form action="#" onSubmit={enterSystem}>
+        <div className={styles.title}>Chat App</div>
+        <form action="#" onSubmit={handleSubmit}>
           <div className={styles.field}>
-            <input 
-              type="text" 
-              required 
-              onChange={event => setUsername(event.target.value)} 
-              value = {username}/>
-            <label>Email Address</label>
+            <TextField 
+              id="outlined-basic"
+              label="Email"
+              variant="outlined"
+              type="email"
+              value={email}
+              onChange={event => setEmail(event.target.value)} 
+            />
           </div>
           <div className={styles.field}>
-            <input 
-              type="password" 
+            <TextField 
+              id="outlined-basic"
+              label="Password"
+              variant="outlined"
+              type="password"
+              value = {password}
               onChange={event => setPassword(event.target.value)} 
-              value= {password}
-              required />
-            <label>Password</label>
+            />
           </div>
           <div className={styles.field}>
-            {/* <input type="submit" defaultValue="Login"/> */}
-            <Button variant="contained" disabled={!username || !password}>Entrar</Button>
+            <Button variant="contained" disabled={!email || !password} type="submit">Login</Button>
           </div>
           <div className={styles.signupLink}>
-            Not a member? <br></br><a href="#">Signup now</a> or <a href="#">Enter as a guest</a> 
+            Not a member?
+          </div>
+          <div className={styles.signupLinkChild}>
+            <a href="#">Signup now</a> or <a href="#">Enter as a guest</a> 
           </div>
         </form>
       </div>
-    </>
   );
 }
